@@ -393,7 +393,7 @@ class Jenkins(JenkinsBase):
         # This only ever needs to work on the base object
         return f"{self.baseurl}/pluginManager/api/python?depth={depth}"
 
-    def get_update_center_url(self, depth = 1):
+    def get_update_center_url(self, depth=1):
         return f"{self.baseurl}/manage/updateCenter/api/json?depth={depth}"
 
     def install_plugin(
@@ -651,7 +651,10 @@ class Jenkins(JenkinsBase):
         url = self.get_plugins_url(depth=depth)
         # If the plugins object is not already created or the baseurl has changed
         # the we recreate a new one
-        if not hasattr(self, '_get_plugins') or self._get_plugins.baseurl != url:
+        if (
+            not hasattr(self, "_get_plugins")
+            or self._get_plugins.baseurl != url
+        ):
             self._get_plugins = Plugins(url, self)
         return self._get_plugins
 

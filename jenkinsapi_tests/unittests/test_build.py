@@ -259,7 +259,7 @@ def test_build_env_vars_wo_injected_env_vars_plugin(monkeypatch, build):
     monkeypatch.setattr(Build, "get_data", fake_get_data)
 
     with pytest.raises(requests.HTTPError) as excinfo:
-        with pytest.warns(None) as record:
+        with pytest.warns(UserWarning) as record:
             build.get_env_vars()
     assert "404" == str(excinfo.value)
     assert len(record) == 1

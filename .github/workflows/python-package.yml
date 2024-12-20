@@ -45,6 +45,7 @@ jobs:
           pypi.org:443
           updates.jenkins-ci.org:80
           updates.jenkins.io:443
+          mirrors.updates.jenkins.io:443
           updates.jenkins.io:80
 
     - name: Checkout

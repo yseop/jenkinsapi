@@ -1,6 +1,7 @@
 """
 Module for jenkinsapi Node class
 """
+
 from __future__ import annotations
 
 import json
@@ -18,7 +19,6 @@ log = logging.getLogger(__name__)
 
 
 class Node(JenkinsBase):
-
     """
     Class to hold information on nodes that are attached as slaves
     to the master jenkins instance
@@ -268,6 +268,27 @@ class Node(JenkinsBase):
                     + "offline = %s , temporarilyOffline = %s"
                     % (data["offline"], data["temporarilyOffline"])
                 )
+
+    def launch(self) -> None:
+        """
+        Tries to launch a connection with the slave if it is currently
+        disconnected. Because launching a connection with the slave does not
+        mean it is online (a slave can be launched, but set offline), this
+        function does not check if the launch was successful.
+        """
+        if not self._data["launchSupported"]:
+            raise AssertionError("The node does not support manually launch.")
+
+        if not self._data["manualLaunchAllowed"]:
+            raise AssertionError(
+                "It is not allowed to manually launch this node."
+            )
+
+        url = self.baseurl + "/launchSlaveAgent"
+        html_result = self.jenkins.requester.post_and_confirm_status(
+            url, data={}
+        )
+        log.debug(html_result)
 
     def toggle_temporarily_offline(
         self, message="requested from jenkinsapi"

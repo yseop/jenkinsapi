@@ -8,11 +8,10 @@ import posixpath
 import requests
 import queue
 import threading
+import tarfile
 import subprocess
-from pkg_resources import resource_stream
 from urllib3 import Retry
 from urllib.parse import urlparse
-from tarfile import TarFile
 
 from requests.adapters import HTTPAdapter
 
@@ -62,14 +61,13 @@ class StreamThread(threading.Thread):
 
 
 class JenkinsLancher(object):
-
     """
     Launch jenkins
     """
 
-    JENKINS_WEEKLY_WAR_URL = "http://updates.jenkins.io/latest/jenkins.war"
+    JENKINS_WEEKLY_WAR_URL = "http://get.jenkins.io/war/latest/jenkins.war"
     JENKINS_LTS_WAR_URL = (
-        "https://updates.jenkins.io/stable/latest/jenkins.war"
+        "https://get.jenkins.io/war-stable/latest/jenkins.war"
     )
 
     def __init__(
@@ -136,12 +134,15 @@ class JenkinsLancher(object):
             )
 
     def update_config(self):
-        tarball = TarFile.open(
-            fileobj=resource_stream(
-                "jenkinsapi_tests.systests", "jenkins_home.tar.gz"
-            )
+        from jenkinsapi_tests import systests
+
+        file = os.path.join(
+            os.path.dirname(systests.__file__), "jenkins_home.tar.gz"
         )
-        tarball.extractall(path=self.jenkins_home)
+
+        with open(file, "rb") as f:
+            with tarfile.open(fileobj=f, mode="r:gz") as tarball:
+                tarball.extractall(path=self.jenkins_home)
 
     def install_plugins(self):
         plugin_dest_dir = os.path.join(self.jenkins_home, "plugins")

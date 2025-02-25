@@ -7,6 +7,7 @@ not. They can also have outcomes, such as whether they passed or failed.
 
 Build objects can be associated with Results and Artifacts.
 """
+
 from __future__ import annotations
 
 import time
@@ -36,7 +37,6 @@ log = logging.getLogger(__name__)
 
 
 class Build(JenkinsBase):
-
     """
     Represents a Jenkins build, executed in context of a job.
     """
@@ -527,8 +527,7 @@ class Build(JenkinsBase):
     def stop(self) -> bool:
         """
         Stops the build execution if it's running
-        :return boolean True if succeded False otherwise or the build
-            is not running
+        :return: boolean True if succeeded False otherwis
         """
         if self.is_running():
             url: str = "%s/stop" % self.baseurl

@@ -217,6 +217,19 @@ class Plugins(JenkinsBase):
         except JenkinsAPIException:
             return False  # lack of update_center in Jenkins 1.X
 
+    def _plugins_has_finished_installation_whatever_status(self) -> bool:
+        """
+        Return True if installation is not marked as 'Pending' or
+        'Installing' in Jenkins' update_center,
+        else return False.
+        """
+        try:
+            jobs = self.update_center_install_status["data"]["jobs"]
+            statuses = set([job["installStatus"] for job in jobs])
+            return not any(a in statuses for a in ["Pending", "Installing"])
+        except JenkinsAPIException:
+            return False  # lack of update_center in Jenkins 1.X
+
     def _plugins_has_finished_installation(self) -> bool:
         """
         Return True if installation is marked as 'Success' or
